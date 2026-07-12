@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Management System</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#111; color:#eee; padding:20px; }
+  h1 { color:#4CAF50; }
+  input, button { padding:8px; margin:4px 0; border-radius:4px; border:1px solid #444; }
+  input { background:#222; color:#eee; width:150px; }
+  button { background:#4CAF50; color:#fff; border:none; cursor:pointer; }
+  button:hover { background:#3e8e41; }
+  table { width:100%; border-collapse:collapse; margin-top:15px; }
+  th, td { border:1px solid #333; padding:8px; text-align:left; }
+  th { background:#222; }
+  #report { background:#1b1b1b; padding:15px; margin-top:15px; border-radius:8px; white-space:pre-line; }
+  .remove-btn { background:#c0392b; }
+  .remove-btn:hover { background:#992d22; }
+</style>
+</head>
+<body>
+
+<h1>🎓 Student Management System</h1>
+
+<div>
+  <input type="text" id="nameInput" placeholder="Student Name">
+  <input type="number" id="marksInput" placeholder="Marks">
+  <button onclick="addStudent()">Add Student</button>
+</div>
+
+<table>
+  <thead>
+    <tr><th>ID</th><th>Name</th><th>Marks</th><th>Grade</th><th>Action</th></tr>
+  </thead>
+  <tbody id="studentTable"></tbody>
+</table>
+
+<div id="report"></div>
+
+<script>
+  // ---------------------------------------------------
+  // Day 5 Mini Project: Student Management System
+  // Uses: Arrays, Objects, forEach(), map(), filter(), reduce()
+  // ---------------------------------------------------
+
+  class StudentManager {
+    constructor() {
+      this.students = [];
+      this.nextId = 1;
+    }
+
+    addStudent(name, marks) {
+      this.students.push({ id: this.nextId++, name, marks });
+    }
+
+    removeStudent(id) {
+      this.students = this.students.filter(s => s.id !== id);
+    }
+
+    getStudentsWithGrades() {
+      return this.students.map(s => {
+        let grade;
+        if (s.marks >= 90) grade = "A";
+        else if (s.marks >= 70) grade = "B";
+        else if (s.marks >= 50) grade = "C";
+        else grade = "F";
+        return { ...s, grade };
+      });
+    }
+
+    getPassedStudents() {
+      return this.students.filter(s => s.marks >= 50);
+    }
+
+    getTopStudent() {
+      if (this.students.length === 0) return null;
+      return this.students.reduce((top, s) => (s.marks > top.marks ? s : top), this.students[0]);
+    }
+
+    getAverage() {
+      if (this.students.length === 0) return 0;
+      const total = this.students.reduce((sum, s) => sum + s.marks, 0);
+      return (total / this.students.length).toFixed(2);
+    }
+
+    printReport() {
+      let report = "---- Class Report ----\n";
+      this.students.forEach(s => {
+        report += `#${s.id} ${s.name}: ${s.marks} marks\n`;
+      });
+      const top = this.getTopStudent();
+      report += `\nAverage Marks: ${this.getAverage()}`;
+      report += `\nTop Student: ${top ? top.name : "N/A"}`;
+      report += `\nPassed Students: ${this.getPassedStudents().map(s => s.name).join(", ") || "None"}`;
+      return report;
+    }
+  }
+
+  const manager = new StudentManager();
+
+  manager.addStudent("Ali", 85);
+  manager.addStudent("Sara", 42);
+  manager.addStudent("Hamza", 67);
+  manager.addStudent("Ayesha", 91);
+
+  function render() {
+    const tableBody = document.getElementById("studentTable");
+    tableBody.innerHTML = "";
+    const studentsWithGrades = manager.getStudentsWithGrades();
+
+    studentsWithGrades.forEach(s => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${s.id}</td>
+        <td>${s.name}</td>
+        <td>${s.marks}</td>
+        <td>${s.grade}</td>
+        <td><button class="remove-btn" onclick="removeStudent(${s.id})">Remove</button></td>
+      `;
+      tableBody.appendChild(row);
+    });
+
+    document.getElementById("report").textContent = manager.printReport();
+  }
+
+  function addStudent() {
+    const name = document.getElementById("nameInput").value.trim();
+    const marks = parseFloat(document.getElementById("marksInput").value);
+
+    if (!name || isNaN(marks)) {
+      alert("Please enter a valid name and marks.");
+      return;
+    }
+
+    manager.addStudent(name, marks);
+    document.getElementById("nameInput").value = "";
+    document.getElementById("marksInput").value = "";
+    render();
+  }
+
+  function removeStudent(id) {
+    manager.removeStudent(id);
+    render();
+  }
+
+  render();
+</script>
+
+</body>
+</html>

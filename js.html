@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Day 2 - Grade Calculator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1e1e2f;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .calculator {
+    background: #2b2b40;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    width: 320px;
+  }
+  h2 {
+    text-align: center;
+    margin-top: 0;
+  }
+  input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  button {
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #45a049;
+  }
+  #result {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 18px;
+    min-height: 50px;
+    white-space: pre-line;
+  }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+  <h2>Grade Calculator</h2>
+
+  <input type="number" id="marks" placeholder="Enter marks (0-100)">
+  <input type="text" id="attendance" placeholder="Attendance OK? (yes/no)">
+
+  <button onclick="calculateGrade()">Get Grade</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  // Day 2: if/else if/else, Comparison & Logical Operators, switch, Ternary
+
+  function calculateGrade() {
+    const marks = Number(document.getElementById("marks").value);
+    const attendanceInput = document.getElementById("attendance").value.toLowerCase();
+
+    // Boolean using comparison + logical operators
+    const attendanceOk = attendanceInput === "yes";
+    const validMarks = marks >= 0 && marks <= 100; // Logical AND
+
+    let grade;
+    let message = "";
+
+    if (!validMarks) {
+      document.getElementById("result").innerText = "Please enter valid marks between 0 and 100.";
+      return;
+    }
+
+    // if / else if / else ladder for grading
+    if (marks >= 90) {
+      grade = "A";
+    } else if (marks >= 75) {
+      grade = "B";
+    } else if (marks >= 60) {
+      grade = "C";
+    } else if (marks >= 40) {
+      grade = "D";
+    } else {
+      grade = "F";
+    }
+
+    // switch statement to generate a remark based on grade
+    switch (grade) {
+      case "A":
+        message = "Outstanding performance!";
+        break;
+      case "B":
+        message = "Great job, keep it up!";
+        break;
+      case "C":
+        message = "Good, but you can improve.";
+        break;
+      case "D":
+        message = "Needs improvement.";
+        break;
+      case "F":
+        message = "Failed. Please work harder.";
+        break;
+      default:
+        message = "Unknown grade.";
+    }
+
+    // Logical operator combining marks & attendance
+    const eligible = validMarks && attendanceOk;
+
+    // Ternary operator for eligibility status
+    const eligibilityText = eligible
+      ? "Eligible for certificate ✅"
+      : "Not eligible for certificate ❌ (check attendance)";
+
+    const output = `Marks: ${marks}
+Grade: ${grade}
+Remark: ${message}
+${eligibilityText}`;
+
+    document.getElementById("result").innerText = output;
+  }
+</script>
+
+</body>
+</html>
