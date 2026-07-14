@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>To-Do List</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1b1f27;
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    color: #eaeaea;
+  }
+
+  .app {
+    width: 380px;
+    background: #242a35;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+
+  p.subtitle {
+    margin: 0 0 20px;
+    font-size: 13px;
+    color: #9aa2b1;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  #taskInput {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #3a4152;
+    background: #1b1f27;
+    color: #eaeaea;
+    font-size: 14px;
+  }
+
+  #taskInput:focus {
+    outline: 2px solid #5b8def;
+  }
+
+  #addBtn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #5b8def;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  #addBtn:hover { background: #4676d8; }
+
+  #taskList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-bottom: 1px solid #323848;
+  }
+
+  .task-item span {
+    flex: 1;
+    font-size: 14px;
+    word-break: break-word;
+  }
+
+  .task-item.done span {
+    text-decoration: line-through;
+    color: #6b7280;
+  }
+
+  .task-item button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .delete-btn { color: #ef5c5c; }
+  .delete-btn:hover { color: #ff8080; }
+
+  .counter {
+    margin-top: 14px;
+    font-size: 12px;
+    color: #9aa2b1;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <h1>To-Do List</h1>
+  <p class="subtitle">Add, complete, and remove your tasks</p>
+
+  <div class="input-row">
+    <input type="text" id="taskInput" placeholder="Add a new task..." />
+    <button id="addBtn">Add</button>
+  </div>
+
+  <ul id="taskList"></ul>
+
+  <div class="counter" id="counter">0 tasks</div>
+</div>
+
+<script>
+  // Getting elements from the page
+  const taskInput = document.getElementById('taskInput');
+  const addBtn = document.getElementById('addBtn');
+
+  const taskList = document.querySelector('#taskList');
+  const counter = document.querySelector('#counter');
+
+  let taskCount = 0;
+
+  addBtn.addEventListener('click', addTask);
+
+  taskInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  });
+
+  function addTask() {
+    const taskText = taskInput.value.trim();
+
+    if (taskText === '') {
+      taskInput.focus();
+      return;
+    }
+
+    const li = document.createElement('li');
+    li.className = 'task-item';
+
+    const span = document.createElement('span');
+    span.textContent = taskText;
+
+    const doneBtn = document.createElement('button');
+    doneBtn.textContent = '✔';
+    doneBtn.title = 'Mark as done';
+    doneBtn.addEventListener('click', function () {
+      li.classList.toggle('done');
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✖';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.title = 'Delete task';
+    deleteBtn.addEventListener('click', function () {
+      taskList.removeChild(li);
+      taskCount--;
+      updateCounter();
+    });
+
+    li.appendChild(span);
+    li.appendChild(doneBtn);
+    li.appendChild(deleteBtn);
+
+    taskList.appendChild(li);
+
+    taskCount++;
+    updateCounter();
+
+    taskInput.value = '';
+    taskInput.focus();
+  }
+
+  function updateCounter() {
+    counter.textContent = taskCount + (taskCount === 1 ? ' task' : ' tasks');
+  }
+</script>
+
+</body>
+</html>
